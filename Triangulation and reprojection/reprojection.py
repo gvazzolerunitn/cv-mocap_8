@@ -8,8 +8,8 @@ from datetime import datetime
 import os
 
 # ——— utenti: percorsi dei file ———
-CALIB_FOLDER  = '3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2'
-ANN_PATH      = '_annotations_rectified_v2.coco.json'  # Use rectified annotations
+CALIB_FOLDER  = '../3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2'
+ANN_PATH      = '../Annotations/_annotations_rectified_v2.coco.json'  # Use rectified annotations
 INPUT_3D      = 'triangulated_positions_v2.json'
 TARGET_CAMS   = [2,5,8,13]
 

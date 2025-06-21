@@ -1,0 +1,38 @@
+REPROJECTION ERROR ANALYSIS RESULTS
+Generated on:,2025-06-21 15:17:57
+
+PARAMETERS
+Parameter,Value
+Calibration Folder,../3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2
+Annotations File,../Annotations/_annotations_rectified_v2.coco.json
+3D Points File,triangulated_positions_v2.json
+Target Cameras,"2, 5, 8, 13"
+Number of Cameras,4
+
+DATA STATISTICS
+Metric,Value
+Total Points Analyzed,3456
+Points per Camera (avg),864.0
+
+REPROJECTION ERROR RESULTS
+Metric,Value (pixels),Description
+MPJPE,15.7288,Mean Per Joint Position Error
+RMSE,18.3849,Root Mean Square Error
+MSE,338.0050,Mean Square Error
+Standard Deviation,9.5189,Standard deviation of errors
+Median Error,13.1630,Median reprojection error
+25th Percentile,8.8951,25% of errors below this value
+75th Percentile,21.6797,75% of errors below this value
+Maximum Error,86.3213,Largest reprojection error
+Minimum Error,0.2028,Smallest reprojection error
+
+ERROR DISTRIBUTION
+Error Range (px),Count,Percentage
+0 - 1,11,0.3%
+1 - 2,24,0.7%
+2 - 5,214,6.2%
+5 - 10,824,23.8%
+10 - 20,1404,40.6%
+≥ 20,979,28.3%
+
+END OF REPORT

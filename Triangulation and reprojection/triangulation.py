@@ -3,8 +3,8 @@ import numpy as np
 import cv2
 
 # ——— utenti: aggiorna questi percorsi se serve ———
-CALIB_FOLDER = '3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2'
-ANN_PATH     = '_annotations_rectified_v2.coco.json'
+CALIB_FOLDER = '../3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2'
+ANN_PATH     = '../Annotations/_annotations_rectified_v2.coco.json'
 OUTPUT_3D    = 'triangulated_positions_v3.json'
 TARGET_CAMS  = [2,5,8,13]
 
