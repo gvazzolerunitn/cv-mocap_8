@@ -105,7 +105,7 @@ for f in range(start_frame, end_frame + 1):        # inclusivo
             continue
         joints[str(coco_idx)] = xyz.astype(float).round(6).tolist()
     if joints:
-        out[str(f)] = joints
+        out[str(f - start_frame)] = joints
 
 # ---------- 6. Salva ----------
 with open(OUTPUT_JSON, "w") as fp:

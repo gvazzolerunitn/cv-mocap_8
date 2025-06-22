@@ -1,103 +1,85 @@
+#!/usr/bin/env python3
 import json
 import numpy as np
 
-# ——— FILE INPUT/OUTPUT ———
-MOCAP_JSON   = 'mocap8_positions_window.json'                     # esportato da export_mocap_segment.py
-TRIANG_JSON  = 'triangulated_positions_window.json'        # triangolato su 0–47
+# ——— manual keypoint order (stesso che in triangulation2.py) ———
+KP_NAMES = [
+  "Hips","RHip","RKnee","RAnkle","RFoot",
+  "LHip","LKnee","LAnkle","LFoot",
+  "Spine","Neck","Head",
+  "RShoulder","RElbow","RHand",
+  "LShoulder","LElbow","LHand"
+]
+HEAD_IDX = KP_NAMES.index("Head")
+LW_IDX   = KP_NAMES.index("LHand")
+RW_IDX   = KP_NAMES.index("RHand")
 
-# ——— Procrustes (Umeyama) alignment ———
+# ——— paths ———
+MOCAP_JSON  = 'mocap_clip_81_85s.json'
+TRIANG_JSON = 'triangulated_positions_window.json'
+
 def umeyama_alignment(X, Y, with_scale=True):
-    """
-    Stima Rigid/Similarity transform che allinea X a Y.
-    X, Y: array Nx3.
-    with_scale: True per includere fattore di scala.
-    Restituisce s, R, t.
-    """
     N, dim = X.shape
-    # centri
-    muX = X.mean(axis=0)
-    muY = Y.mean(axis=0)
-    Xc  = X - muX
-    Yc  = Y - muY
-
-    # matrice di covarianza
-    SXY = (Yc.T @ Xc) / N
-
-    # SVD
-    U, D_vec, Vt = np.linalg.svd(SXY)
-
-    # correzione in caso di riflessione
-    S_mat = np.eye(dim)
-    if np.linalg.det(U) * np.linalg.det(Vt) < 0:
+    muX, muY = X.mean(axis=0), Y.mean(axis=0)
+    Xc, Yc   = X - muX, Y - muY
+    SXY      = (Yc.T @ Xc) / N
+    U, Dv, Vt = np.linalg.svd(SXY)
+    S_mat    = np.eye(dim)
+    if np.linalg.det(U)*np.linalg.det(Vt) < 0:
         S_mat[-1, -1] = -1
-
-    # rotazione
     R = U @ S_mat @ Vt
-
-    # scala
     if with_scale:
-        # varianza di X
-        varX = (Xc ** 2).sum() / N
-        # costruisci diag(D_vec)
-        D_mat = np.diag(D_vec)
-        # trace(D_mat @ S_mat)
-        scale_num = np.trace(D_mat @ S_mat)
-        s = scale_num / varX
+        varX = (Xc**2).sum()/N
+        s    = np.trace(np.diag(Dv) @ S_mat) / varX
     else:
         s = 1.0
-
-    # traslazione
-    t = muY - s * (R @ muX)
+    t = muY - s*(R @ muX)
     return s, R, t
 
-#calcolo offset tra frame MoCap e triangolazione
-# cerca il primo frame valido in ciascun dataset
-def find_first_valid_frame(data):
-    for t_str in sorted(data, key=lambda x: int(x)):
-        joints = data[t_str]
-        for v in joints.values():
-            if isinstance(v, list) and len(v) == 3:
-                return int(t_str)
-    return None
-
 def main():
-    # carica JSON MoCap e triangolazioni
-    mocap = json.load(open(MOCAP_JSON, 'r'))
-    tri   = json.load(open(TRIANG_JSON, 'r'))
+    # — 1) Carica e normalizza triangolazioni al proprio frame0
+    tri_raw   = json.load(open(TRIANG_JSON))
+    tri_keys  = sorted(int(k) for k in tri_raw)
+    start_tri = tri_keys[0]
+    tri = { str(k - start_tri): tri_raw[str(k)]
+            for k in tri_keys }
 
-    # Calcola offset automaticamente
-    first_mocap = find_first_valid_frame(mocap)
-    first_triang = find_first_valid_frame(tri)
-    offset = first_mocap - first_triang
-    print(f"Offset calcolato automaticamente: {offset} (frame MoCap = frame Triangolazione + {offset})")
+    # — 2) Carica e normalizza MoCap al proprio frame0
+    mocap_raw  = json.load(open(MOCAP_JSON))
+    mocap_keys = sorted(int(k) for k in mocap_raw)
+    start_m    = mocap_keys[0]
+    mocap = { str(k - start_m): mocap_raw[str(k)]
+              for k in mocap_keys }
 
-    # costruisci liste di punti corrispondenti
-    X_list, Y_list = [], []
+    # — 3) Offset manuale dal tiro (MoCap = Video + 285)
+    offset = 285
+    print(f"Using manual offset = {offset} frames  (MoCap = Video + {offset})")
+
+    # — 4) Raccogli joint‐pairs corrispondenti
+    Xs, Ys = [], []
     for t_str, tv in tri.items():
-        mocap_frame = str(int(t_str) + offset)
-        mv = mocap.get(mocap_frame, {})
+        m_key = str(int(t_str) + offset)
+        mv    = mocap.get(m_key, {})
         for j_str, pos_v in tv.items():
             pos_m = mv.get(j_str)
             if pos_m is not None:
-                X_list.append(pos_m)
-                Y_list.append(pos_v)
+                Xs.append(pos_m)
+                Ys.append(pos_v)
 
-    X = np.array(X_list, dtype=float)
-    Y = np.array(Y_list, dtype=float)
-    print(f"Matched {len(X)} joint-pairs (should be ≈48*#joints)")
+    X = np.array(Xs, dtype=float)
+    Y = np.array(Ys, dtype=float)
+    print(f"Matched {len(X)} joint-pairs  (idealmente 48×18=864)")
 
-    # Rigid (no scale)
-    s_r, R_r, t_r = umeyama_alignment(X, Y, with_scale=False)
-    Xr = (R_r @ X.T).T + t_r
-    errs_r = np.linalg.norm(Xr - Y, axis=1)
+    # — 5) Procrustes
+    s0, R0, t0 = umeyama_alignment(X, Y, with_scale=False)
+    Xr0 = (R0 @ X.T).T + t0
+    e0  = np.linalg.norm(Xr0 - Y, axis=1)
 
-    # Similarity (with scale)
-    s_s, R_s, t_s = umeyama_alignment(X, Y, with_scale=True)
-    Xs = (s_s * R_s @ X.T).T + t_s
-    errs_s = np.linalg.norm(Xs - Y, axis=1)
+    s1, R1, t1 = umeyama_alignment(X, Y, with_scale=True)
+    Xr1 = (s1 * R1 @ X.T).T + t1
+    e1  = np.linalg.norm(Xr1 - Y, axis=1)
 
-    # funzione per stampare statistiche
-    def print_stats(errs, label):
+    def stats(errs, label):
         print(f"\n— {label} —")
         print(f" MPJPE = {errs.mean():.3f}")
         print(f" RMSE  = {np.sqrt((errs**2).mean()):.3f}")
@@ -105,8 +87,8 @@ def main():
         print(f" Min   = {errs.min():.3f}")
         print(f" Count = {len(errs)}")
 
-    print_stats(errs_r, "Rigid (no scale)")
-    print_stats(errs_s, "Similarity (with scale)")
+    stats(e0, "Rigid (no scale)")
+    stats(e1, "Similarity (with scale)")
 
-if __name__=='__main__':
+if __name__ == "__main__":
     main()
