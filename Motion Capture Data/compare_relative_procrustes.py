@@ -2,7 +2,7 @@ import json
 import numpy as np
 
 # ——— FILE INPUT/OUTPUT ———
-MOCAP_JSON   = 'mocap8_positions.json'                     # esportato da export_mocap_segment.py
+MOCAP_JSON   = 'mocap8_positions_window.json'                     # esportato da export_mocap_segment.py
 TRIANG_JSON  = 'triangulated_positions_window.json'        # triangolato su 0–47
 
 # ——— Procrustes (Umeyama) alignment ———
@@ -50,16 +50,32 @@ def umeyama_alignment(X, Y, with_scale=True):
     t = muY - s * (R @ muX)
     return s, R, t
 
-# ——— Caricamento dati ———
+#calcolo offset tra frame MoCap e triangolazione
+# cerca il primo frame valido in ciascun dataset
+def find_first_valid_frame(data):
+    for t_str in sorted(data, key=lambda x: int(x)):
+        joints = data[t_str]
+        for v in joints.values():
+            if isinstance(v, list) and len(v) == 3:
+                return int(t_str)
+    return None
+
 def main():
     # carica JSON MoCap e triangolazioni
     mocap = json.load(open(MOCAP_JSON, 'r'))
     tri   = json.load(open(TRIANG_JSON, 'r'))
 
+    # Calcola offset automaticamente
+    first_mocap = find_first_valid_frame(mocap)
+    first_triang = find_first_valid_frame(tri)
+    offset = first_mocap - first_triang
+    print(f"Offset calcolato automaticamente: {offset} (frame MoCap = frame Triangolazione + {offset})")
+
     # costruisci liste di punti corrispondenti
     X_list, Y_list = [], []
     for t_str, tv in tri.items():
-        mv = mocap.get(t_str, {})
+        mocap_frame = str(int(t_str) + offset)
+        mv = mocap.get(mocap_frame, {})
         for j_str, pos_v in tv.items():
             pos_m = mv.get(j_str)
             if pos_m is not None:
