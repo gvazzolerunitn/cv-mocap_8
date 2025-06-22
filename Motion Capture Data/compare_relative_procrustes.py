@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import numpy as np
+import csv
 
 # ——— manual keypoint order (stesso che in triangulation2.py) ———
 KP_NAMES = [
@@ -90,5 +91,27 @@ def main():
     stats(e0, "Rigid (no scale)")
     stats(e1, "Similarity (with scale)")
 
+     # 6) Salva su CSV
+    metrics = [
+        ("Count",           len(e0),                len(e1)),
+        ("MPJPE (px)",      e0.mean(),              e1.mean()),
+        ("MSE (px^2)",      (e0**2).mean(),         (e1**2).mean()),
+        ("RMSE (px)",       np.sqrt((e0**2).mean()), np.sqrt((e1**2).mean())),
+        ("Median (px)",     np.median(e0),         np.median(e1)),
+        ("25th Percentile", np.percentile(e0, 25), np.percentile(e1, 25)),
+        ("75th Percentile", np.percentile(e0, 75), np.percentile(e1, 75)),
+        ("Max (px)",        e0.max(),               e1.max()),
+        ("Min (px)",        e0.min(),               e1.min()),
+    ]
+
+    with open('accuracy_metrics.csv','w', newline='') as csvfile:
+        w = csv.writer(csvfile)
+        # Header
+        w.writerow(["Metric", "Rigid_no_scale", "Similarity_with_scale"])
+        # Rows
+        for name, r_val, s_val in metrics:
+            w.writerow([name, f"{r_val:.3f}", f"{s_val:.3f}"])
+
+    print("✅ Saved accuracy metrics to accuracy_metrics.csv")
 if __name__ == "__main__":
     main()
