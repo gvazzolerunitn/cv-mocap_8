@@ -1,0 +1,10 @@
+Metric,Rigid_no_scale,Similarity_with_scale
+Count,864.000,864.000
+MPJPE (px),686.265,661.430
+MSE (px^2),564800.214,515581.746
+RMSE (px),751.532,718.040
+Median (px),631.744,641.520
+25th Percentile,467.694,466.617
+75th Percentile,854.862,824.985
+Max (px),1773.433,1683.654
+Min (px),50.315,68.274
