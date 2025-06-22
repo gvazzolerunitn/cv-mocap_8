@@ -2,7 +2,7 @@ import os, re, json
 import numpy as np
 import cv2
 
-# ——— utenti: aggiorna questi percorsi se serve ———
+# ——— PATH ———
 CALIB_FOLDER = '../3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2'
 ANN_PATH     = '../Annotations/_annotations_rectified_v2.coco.json'
 OUTPUT_3D    = 'triangulated_positions_window.json'

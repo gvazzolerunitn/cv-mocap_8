@@ -10,7 +10,7 @@ import numpy as np
 from scipy.io import loadmat
 
 MAT_FILE     = "Nick_3.mat"
-OUTPUT_JSON  = "mocap_clip_81_85s.json"
+OUTPUT_JSON  = "mocap_clip_79_83s.json"
 
 # Ordine COCO da mantenere nell'output (18 key-points)
 COCO_KPTS = [
@@ -79,8 +79,8 @@ T, J, _ = P.shape
 
 # ---------- 4. Intervallo temporale ----------
 fps          = int(mo.FrameRate)      # 100 fps
-START_SEC    = 81
-END_SEC      = 85
+START_SEC    = 79
+END_SEC      = 83
 start_frame  = int(START_SEC * fps)        # 0-based → 8100
 end_frame    = int(END_SEC   * fps) - 1    # 0-based → 8499
 if end_frame >= T:
