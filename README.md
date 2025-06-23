@@ -133,7 +133,7 @@ Compute Procrustes errors:
 cd Motion Capture Data
 python compare_relative_procrustes.py
 ```
-See the difference between the 2 skeleton
+See the difference between the 2 skeleton:
 ```bash
 cd Motion Capture Data
 python skeleton_comparison.py
@@ -157,6 +157,7 @@ For more accurate—but more CPU‐intensive—inference, swap out `yolov8s-pose
 `yolov8l-pose.pt` (large)
 
 `yolov8x-pose.pt` (extra large)
+
 ---
 ## 📂 Data & Results
 
