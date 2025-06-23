@@ -1,4 +1,4 @@
-# CV-MoCap_8
+# MoCap_8
 
 **Computer Vision Project – MoCap Alignment**  
 Group member:
