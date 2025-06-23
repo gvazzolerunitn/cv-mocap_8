@@ -44,7 +44,7 @@ cv-mocap_8/
 │ └── skeleton_comparison.py
 │ ├── accuracy_metrics.csv
 │ └── mocap_clip_79_83s.json
-│ └── numero_frame_mat.py
+│ └── frame_number_mat.py
 │ └── timestamps_nick3.txt
 │ └── timestamps.txt
 │ └── Nick_3.mat
