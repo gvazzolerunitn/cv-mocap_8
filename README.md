@@ -77,13 +77,12 @@ cv-mocap_8/
 - **Dependencies** (see `requirements.txt`):
 
   ```bash
-  numpy
-  scipy
-  opencv-python
-  ultralytics
-  matplotlib
-  tqdm
-  roboflow
+  matplotlib==3.10.3
+  numpy==2.3.1
+  opencv_contrib_python==4.11.0.86
+  scipy==1.16.0
+  tqdm==4.67.1
+  ultralytics==8.3.158
   ```
 install with
 ```bash
