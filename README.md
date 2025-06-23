@@ -28,6 +28,8 @@ cv-mocap_8/
 │ └── rectify_annotationsV2.py
 ├── dataset/
 │ └── mocap_8.v1i.coco/
+│ └── README.dataset.txt/
+│ └── README.roboflow.txt/
 │ └── train/
 │ └── annotations.coco.json ← original COCO train split
 ├── 3D Pose Estimation Material/
