@@ -20,7 +20,7 @@ HIPS_IDX = KP_NAMES.index("Hips")
 
 # ——— paths ———
 MOCAP_JSON  = 'mocap_clip_79_83s.json'
-TRIANG_JSON = "triangulated_positions_window.json"
+TRIANG_JSON = "../Triangulation and reprojection and 3D/triangulated_positions_v2.json"
 
 def umeyama_alignment(X, Y, with_scale=True):
     N, dim = X.shape
