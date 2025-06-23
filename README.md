@@ -1,4 +1,4 @@
-# cv-mocap_8
+# CV-MoCap_8
 
 **Computer Vision Project – MoCap Alignment**  
 Group member:
@@ -76,22 +76,90 @@ cv-mocap_8/
 ---
 ## ⚙️ Requirements & Installation
 
-# Crea ambiente virtuale
+1. Create a virtual environment
 ```bash
 python -m venv mocap_env
 ```
-# Attiva ambiente (Linux/Mac)
+a. Linux/Mac
 ```bash
 source mocap_env/bin/activate
 ```
-# Installa dipendenze
+b. Windows
+```bash
+mocap_env\Scripts\activate
+```
+2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 ---
+> **⚠️ Note:** All commands below assume you are running them from the project root directory (`cv-mocap_8/`).
+> ---
 # 🚀 Usage
-1. Annotate Skeletons
-2. 3D Player’s Position
+1. Annotate Skeletons (Roboflow upload)  
+Rectify raw annotations and prepare COCO file:
 ```bash
-
+cd Annotations
+python rectify_annotationsV2.py \
+  --input-dir dataset/mocap_8.v1i.coco/train \
+  --output Annotations/_annotations_rectified_v2.coco.json
 ```
+2. 3D Player’s Position via Triangulation
+Triangulate: 
+```bash
+cd Triangulation and reprojection and 3D
+python triangulation.py
+```
+Analyze reprojection error:
+```bash
+cd Triangulation and reprojection and 3D
+python reprojection.py
+```
+3. Time-aligning with MoCap Data  
+Align video to MoCap:
+```bash
+cd Motion Capture Data
+python export_mocap_segment.py
+```
+Compute Procrustes errors:
+```bash
+cd Motion Capture Data
+python compare_relative_procrustes.py
+```
+See the difference between the 2 skeleton
+```bash
+cd Motion Capture Data
+python skeleton_comparison.py
+```
+4. Bonus: YOLOv8-Pose Inference & Evaluation  
+Run YOLOv8‑Pose on all views, evaluate 2D & triangulate 3D:
+```bash
+cd YOLO
+python yolo_predict.py
+python triangulation_YOLO.py
+python evaluate_yolo_vs_gt.py 
+python 3d_confront.py
+```
+---
+## 💡 Tip for YOLO  
+For more accurate—but more CPU‐intensive—inference, swap out `yolov8s-pose.pt` (small) for:
+
+`yolov8m-pose.pt` (medium)
+
+`yolov8l-pose.pt` (large)
+
+`yolov8x-pose.pt` (extra large)
+---
+## 📂 Data & Results
+
+Annotations: `Annotations/_annotations_rectified_v2.coco.json`
+
+3D Points: `Triangulation and reprojection and 3D/triangulated_positions_v2.json`
+
+Reprojection Errors: `Triangulation and reprojection and 3D/reprojection_results.csv`
+
+Alignment Metrics: `Motion Capture Data/accuracy_metrics.csv`
+
+2D YOLO Evaluation: `YOLO/mpjpe_results.csv`
+
+3D YOLO vs MoCap: `YOLO/mpjpe_3d_results.csv`
