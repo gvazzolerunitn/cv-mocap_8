@@ -5,6 +5,10 @@ import os
 import glob
 import re
 
+"""
+We kept the original code structure but made some adjustments to make it work with our current folder structure.
+"""
+
 def load_calibration(calib_path):
     # Load the camera calibration parameters from a JSON file.
     with open(calib_path, 'r') as f:
@@ -68,9 +72,10 @@ def main():
         match = re.search(r'out(\d+)\.mp4', basename)
         if match:
             cam_index = match.group(1)
-            # Fixed calibration path to match your actual folder structure
+            # Fixed calibration path to match our actual folder structure
             calib_path = os.path.join(
-                "camera_data", 
+                "camera_data_with_Rvecs_2ndversion",
+                "Camera_config2", 
                 f"cam_{cam_index}",
                 "calib",
                 "camera_calib.json"
