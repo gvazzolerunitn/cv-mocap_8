@@ -110,7 +110,7 @@ def find_optimal_frame_mapping():
         
         # Determine search range for MoCap frames
         # Start with expected frame based on frame rate ratio, then search nearby
-        expected_mocap_frame = int(video_frame * FRAME_RATIO)
+        expected_mocap_frame = int(video_frame * FRAME_RATIO)-40
         search_range = range(max(0, expected_mocap_frame - 20), 
                            min(len(mocap_data), expected_mocap_frame + 21))
         
