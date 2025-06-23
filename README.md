@@ -65,7 +65,7 @@ cv-mocap_8/
 │ └── mpjpe_3d_results.csv
 │ └── mpjpe_results.csv
 ├── video/
-│ ├── og/
+│ ├── mocap_7/
 │ ├── rectified/
 │ ├── rectified_rvecs/
 │ ├── rectified_rvecs_2nd/
