@@ -73,23 +73,20 @@ cv-mocap_8/
 ---
 ## ⚙️ Requirements & Installation
 
-- **Python** 3.8+  
-- **Dependencies** (see `requirements.txt`):
-
-  ```bash
-  matplotlib==3.10.3
-  numpy==2.3.1
-  opencv_contrib_python==4.11.0.86
-  scipy==1.16.0
-  tqdm==4.67.1
-  ultralytics==8.3.158
-  ```
-install with
+# Crea ambiente virtuale
+```bash
+python -m venv mocap_env
+```
+# Attiva ambiente (Linux/Mac)
+```bash
+source mocap_env/bin/activate
+```
+# Installa dipendenze
 ```bash
 pip install -r requirements.txt
 ```
-
-🚀 Usage
+---
+# 🚀 Usage
 1. Annotate Skeletons
 2. 3D Player’s Position
 ```bash
