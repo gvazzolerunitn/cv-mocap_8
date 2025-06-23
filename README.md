@@ -104,6 +104,7 @@ python rectify_annotationsV2.py \
   --input-dir dataset/mocap_8.v1i.coco/train \
   --output Annotations/_annotations_rectified_v2.coco.json
 ```
+---
 2. 3D Player’s Position via Triangulation
 Triangulate: 
 ```bash
@@ -115,6 +116,7 @@ Analyze reprojection error:
 cd Triangulation and reprojection and 3D
 python reprojection.py
 ```
+---
 3. Time-aligning with MoCap Data  
 Align video to MoCap:
 ```bash
@@ -131,6 +133,7 @@ See the difference between the 2 skeleton
 cd Motion Capture Data
 python skeleton_comparison.py
 ```
+---
 4. Bonus: YOLOv8-Pose Inference & Evaluation  
 Run YOLOv8‑Pose on all views, evaluate 2D & triangulate 3D:
 ```bash
