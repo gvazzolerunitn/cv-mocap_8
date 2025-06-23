@@ -1,7 +1,9 @@
 # cv-mocap_8
 
-**Computer Vision Project – Multi-view 3D Pose & MoCap Alignment**  
-Group: gvazzolerunitn  
+**Computer Vision Project – MoCap Alignment**  
+Group member:
+Antonio Di Lauro,
+Gianluigi Vazzoler
 
 ---
 
@@ -64,4 +66,33 @@ cv-mocap_8/
 │ ├── rectified/
 │ ├── rectified_rvecs/
 │ └── fixed/rectified_rvecs_2nd/
+├── requirements.txt
 └── README.md
+
+```
+---
+## ⚙️ Requirements & Installation
+
+- **Python** 3.8+  
+- **Dependencies** (see `requirements.txt`):
+
+  ```bash
+  numpy
+  scipy
+  opencv-python
+  ultralytics
+  matplotlib
+  tqdm
+  roboflow
+  ```
+install with
+```bash
+pip install -r requirements.txt
+```
+
+🚀 Usage
+1. Annotate Skeletons
+2. 3D Player’s Position
+```bash
+
+```
