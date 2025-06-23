@@ -68,7 +68,6 @@ cv-mocap_8/
 │ ├── og/
 │ ├── rectified/
 │ ├── rectified_rvecs/
-│ └── fixed/rectified_rvecs_2nd/
 ├── requirements.txt
 └── README.md
 
@@ -115,6 +114,11 @@ Analyze reprojection error:
 ```bash
 cd Triangulation and reprojection and 3D
 python reprojection.py
+```
+Visualize the skeleton in 3D:
+```bash
+cd Triangulation and reprojection and 3D
+python visualize_3d_poses.py
 ```
 ---
 3. Time-aligning with MoCap Data  
