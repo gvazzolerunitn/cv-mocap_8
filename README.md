@@ -179,7 +179,7 @@ Alignment Metrics: `Motion Capture Data/accuracy_metrics.csv`
 
 ## Authors
 
-- Antonio Di Lauro, Florian Remberger
+- Antonio Di Lauro, Gianluigi Vazzoler
 - Computer Vision course, University of Trento, 2024-2025
 
 ---
