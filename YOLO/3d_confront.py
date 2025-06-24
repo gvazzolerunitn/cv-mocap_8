@@ -64,6 +64,7 @@ else:
 # Write detailed per-frame, per-joint MPJPE values to CSV
 with open('mpjpe_3d_results.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
+    # Header for individual measurements
     writer.writerow(['frame', 'joint', 'mpjpe_mm'])
     for frame in common_frames:
         for j in range(NUM_JOINTS):
@@ -77,5 +78,36 @@ with open('mpjpe_3d_results.csv', 'w', newline='') as csvfile:
                 continue
             err = np.linalg.norm(np.array(yolo_joint) - np.array(gt_joint))
             writer.writerow([frame, j, err])
+    
+    # Blank line separator
+    writer.writerow([])
+    
+    # Summary statistics
+    writer.writerow(['STATISTIC', 'VALUE_mm'])
+    if mpjpe_list:
+        writer.writerow(['mean_mpjpe', f"{np.mean(mpjpe_list):.2f}"])
+        writer.writerow(['median_mpjpe', f"{np.median(mpjpe_list):.2f}"])
+        writer.writerow(['min_mpjpe', f"{np.min(mpjpe_list):.2f}"])
+        writer.writerow(['max_mpjpe', f"{np.max(mpjpe_list):.2f}"])
+        writer.writerow(['total_joint_pairs', len(mpjpe_list)])
+        writer.writerow(['total_frames', len(common_frames)])
+        
+        # Blank line separator
+        writer.writerow([])
+        
+        # Per-joint statistics
+        writer.writerow(['JOINT_INDEX', 'MEAN_ERROR_mm', 'NUM_MEASUREMENTS'])
+        for j, errs in enumerate(per_joint_errors):
+            if errs:
+                writer.writerow([j, f"{np.mean(errs):.2f}", len(errs)])
+            else:
+                writer.writerow([j, 'N/A', 0])
+    else:
+        writer.writerow(['mean_mpjpe', 'N/A'])
+        writer.writerow(['median_mpjpe', 'N/A'])
+        writer.writerow(['min_mpjpe', 'N/A'])
+        writer.writerow(['max_mpjpe', 'N/A'])
+        writer.writerow(['total_joint_pairs', 0])
+        writer.writerow(['total_frames', len(common_frames)])
 
 print("✅ Results saved to mpjpe_3d_results.csv")
