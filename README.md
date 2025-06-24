@@ -152,7 +152,7 @@ python 3d_confront.py
 ```
 ---
 ## 💡 Tip for YOLO  
-For more accurate—but more CPU‐intensive—inference, we suggest to swapping out `yolov8s-pose.pt` (small) for:
+For more accurate—but more CPU‐intensive—inference, we suggest swapping out `yolov8s-pose.pt` (small) for:
 
 `yolov8m-pose.pt` (medium)
 
