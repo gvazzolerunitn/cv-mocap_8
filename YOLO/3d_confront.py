@@ -3,7 +3,7 @@ import numpy as np
 import csv
 
 # Paths to the YOLO-triangulated 3D output and the ground-truth triangulated positions
-YOLO_3D_PATH = 'triangulated_positions_yolo.json'
+YOLO_3D_PATH = 'triangulated_positions_corrected.json'
 GT_3D_PATH   = '../Triangulation and reprojection and 3D/triangulated_positions_v2.json'
 
 # Number of joints expected in each pose (17 for COCO, 18 if there is one extra)
@@ -62,7 +62,7 @@ else:
     print("No comparable joint-pairs found!")
 
 # Write detailed per-frame, per-joint MPJPE values to CSV
-with open('mpjpe_3d_results.csv', 'w', newline='') as csvfile:
+with open('mpjpe_3d_resultsV2.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     # Header for individual measurements
     writer.writerow(['frame', 'joint', 'mpjpe_mm'])
@@ -110,4 +110,4 @@ with open('mpjpe_3d_results.csv', 'w', newline='') as csvfile:
         writer.writerow(['total_joint_pairs', 0])
         writer.writerow(['total_frames', len(common_frames)])
 
-print("✅ Results saved to mpjpe_3d_results.csv")
+print("✅ Results saved to mpjpe_3d_resultsV2.csv")
