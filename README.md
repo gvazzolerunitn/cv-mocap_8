@@ -146,7 +146,7 @@ cd YOLO
 python yolo_predict.py
 python yolo_keypoint_extraction.py
 python fix_yolo_coordinates.py
-python triangulation_YOLO.py
+python triangulation_yolo.py
 python evaluate_yolo_vs_gt.py 
 python 3d_confront.py
 ```
