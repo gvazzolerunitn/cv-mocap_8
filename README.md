@@ -101,10 +101,10 @@ Rectify raw annotations and prepare COCO file:
 ```bash
 cd Annotations
 python rectify_annotationsV2.py \
-  --input-dir dataset/mocap_8.v1i.coco/train \
+  --coco dataset/mocap_8.v1i.coco/train \
+  --calib_dir "3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2"
   --output Annotations/_annotations_rectified_v2.coco.json
 ```
----
 2. 3D Player’s Position via Triangulation
 Triangulate: 
 ```bash
@@ -119,7 +119,7 @@ python reprojection.py
 Visualize the skeleton in 3D:
 ```bash
 cd Triangulation and reprojection and 3D
-python visualize_3d_poses.py
+python visualize_3d_poses.py triangulated_positions_v2.json
 ```
 ---
 3. Time-aligning with MoCap Data  
@@ -133,7 +133,7 @@ Compute Procrustes errors:
 cd Motion Capture Data
 python compare_relative_procrustes.py
 ```
-See the difference between the 2 skeleton:
+To graphically visualize the difference between the 2 skeleton:
 ```bash
 cd Motion Capture Data
 python skeleton_comparison.py
@@ -152,7 +152,7 @@ python 3d_confront.py
 ```
 ---
 ## 💡 Tip for YOLO  
-For more accurate—but more CPU‐intensive—inference, swap out `yolov8s-pose.pt` (small) for:
+For more accurate—but more CPU‐intensive—inference, we suggest to swapping out `yolov8s-pose.pt` (small) for:
 
 `yolov8m-pose.pt` (medium)
 
@@ -167,11 +167,11 @@ Annotations: `Annotations/_annotations_rectified_v2.coco.json`
 
 3D Points: `Triangulation and reprojection and 3D/triangulated_positions_v2.json`
 
-Reprojection Errors: `Triangulation and reprojection and 3D/reprojection_results.csv`
+Reprojection errors: `Triangulation and reprojection and 3D/reprojection_results.csv`
 
-Alignment Metrics: `Motion Capture Data/accuracy_metrics.csv`
+Mocap alignment metrics: `Motion Capture Data/accuracy_metrics.csv`
 
-2D YOLO Evaluation: `YOLO/mpjpe_results.csv`
+2D YOLO evaluation: `YOLO/mpjpe_results.csv`
 
 3D YOLO vs MoCap: `YOLO/mpjpe_3d_results.csv`
 
