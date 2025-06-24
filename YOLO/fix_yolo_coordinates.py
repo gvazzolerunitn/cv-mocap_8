@@ -66,7 +66,7 @@ def rescale_yolo_coordinates():
                 # Mantieni originali se non hai calibrazione
                 corrected_data[frame][cam] = yolo_2d[frame][cam]
     
-    # Salva dati corretti
+    # save the data to a new JSON file
     with open('yolo2d_for_triangulation_rescaled.json', 'w') as f:
         json.dump(corrected_data, f, indent=2)
     

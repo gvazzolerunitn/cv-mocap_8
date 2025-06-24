@@ -1,12 +1,13 @@
 import json
 import numpy as np
 import csv
+from scipy.spatial import procrustes
 
 # Paths to the YOLO-triangulated 3D output and the ground-truth triangulated positions
-YOLO_3D_PATH = 'triangulated_positions_corrected.json'
-GT_3D_PATH   = '../Triangulation and reprojection and 3D/triangulated_positions_v2.json'
+YOLO_3D_PATH = 'triangulated_positions.json'
+GT_3D_PATH   = '../Motion Capture Data/mocap_clip_79_83s.json'
 
-# Number of joints expected in each pose (17 for COCO, 18 if there is one extra)
+# Number of joints expected in each pose (17 for COCO)
 NUM_JOINTS = 17
 
 # Load the YOLO-based 3D reconstructions
@@ -17,72 +18,109 @@ with open(YOLO_3D_PATH) as f:
 with open(GT_3D_PATH) as f:
     gt_3d = json.load(f)
 
-# Prepare lists to collect per-joint errors and overall MPJPE
+# --- INIZIO LOGICA DI ALLINEAMENTO FRAME ---
+
+# 1. Normalizza i numeri di frame a interi per un calcolo affidabile
+yolo_frames_int = sorted([int(k) for k in yolo_3d.keys()])
+gt_frames_int = sorted([int(k) for k in gt_3d.keys()])
+
+if not yolo_frames_int or not gt_frames_int:
+    print("Errore: Uno dei due dataset non contiene frame. Uscita.")
+    exit()
+
+# 2. Calcola l'offset temporale tra i due set di dati
+# Si assume che il primo frame della sequenza YOLO corrisponda al primo della sequenza MoCap.
+offset = gt_frames_int[0] - yolo_frames_int[0]
+print(f"Frame iniziali -> YOLO: {yolo_frames_int[0]}, MoCap: {gt_frames_int[0]}")
+print(f"Offset calcolato tra i frame: {offset}")
+
+# 3. Crea una mappa dal frame YOLO al corrispondente frame MoCap
+# Un frame YOLO 'f' viene mappato al frame MoCap 'f + offset' se quest'ultimo esiste.
+frame_mapping = {}
+for yolo_frame in yolo_frames_int:
+    gt_equivalent = yolo_frame + offset
+    if gt_equivalent in gt_frames_int:
+        # Usa stringhe per le chiavi, per coerenza con il formato JSON
+        frame_mapping[str(yolo_frame)] = str(gt_equivalent)
+
+common_yolo_frames = sorted(frame_mapping.keys(), key=int)
+print(f"Trovati {len(common_yolo_frames)} frame comuni dopo l'allineamento con offset.")
+
+# --- FINE LOGICA DI ALLINEAMENTO FRAME ---
+
+# Prepara le liste per le statistiche
 mpjpe_list = []
 per_joint_errors = [[] for _ in range(NUM_JOINTS)]
+frame_joint_errors = {} # Per salvare gli errori per il CSV
 
-# Find the set of frames present in both predictions and ground truth
-common_frames = set(yolo_3d.keys()) & set(gt_3d.keys())
-print(f"Common frames: {sorted(common_frames)}")
+# Itera su ogni frame comune per eseguire l'allineamento e calcolare l'errore
+for yolo_frame_str in common_yolo_frames:
+    gt_frame_str = frame_mapping[yolo_frame_str]
+    
+    yolo_points_for_frame = []
+    gt_points_for_frame = []
+    valid_joint_indices = []
 
-# Iterate over each common frame
-for frame in common_frames:
-    # For each joint index in the pose
+    # 1. Colleziona tutte le coppie di giunti valide per il frame corrente
     for j in range(NUM_JOINTS):
-        # Attempt to retrieve the predicted and ground-truth 3D coordinates
-        yolo_joint = yolo_3d[frame].get(str(j)) or yolo_3d[frame].get(j)
-        gt_joint   = gt_3d[frame].get(str(j)) or gt_3d[frame].get(j)
+        yolo_joint = yolo_3d[yolo_frame_str].get(str(j))
+        gt_joint   = gt_3d[gt_frame_str].get(str(j))
 
-        # Skip if either is missing or contains NaN/inf
-        if yolo_joint is None or gt_joint is None:
-            continue
-        if np.any(np.isnan(yolo_joint)) or np.any(np.isnan(gt_joint)):
-            continue
-        if np.any(np.isinf(yolo_joint)) or np.any(np.isinf(gt_joint)):
-            continue
+        # Controlla se entrambi i giunti sono validi
+        if (yolo_joint is not None and gt_joint is not None and
+            not np.any(np.isnan(yolo_joint)) and not np.any(np.isnan(gt_joint)) and
+            not np.any(np.isinf(yolo_joint)) and not np.any(np.isinf(gt_joint))):
+            
+            yolo_points_for_frame.append(yolo_joint)
+            gt_points_for_frame.append(gt_joint)
+            valid_joint_indices.append(j)
 
-        # Compute the Euclidean distance (MPJPE) for this joint
-        err = np.linalg.norm(np.array(yolo_joint) - np.array(gt_joint))
-        mpjpe_list.append(err)
-        per_joint_errors[j].append(err)
+    # 2. Esegui l'allineamento se ci sono abbastanza punti (almeno 3 per stabilità)
+    if len(yolo_points_for_frame) < 3:
+        print(f"Saltando frame {yolo_frame_str}: trovate solo {len(yolo_points_for_frame)} coppie di giunti valide.")
+        continue
 
-# If we collected any errors, print summary statistics
+    yolo_np = np.array(yolo_points_for_frame)
+    gt_np = np.array(gt_points_for_frame)
+
+    # 3. Allinea i punti YOLO a quelli GT usando l'analisi di Procruste
+    gt_aligned, yolo_aligned, disparity = procrustes(gt_np, yolo_np)
+
+    # 4. Calcola gli errori sui punti allineati
+    errors = np.linalg.norm(gt_aligned - yolo_aligned, axis=1)
+    
+    # 5. Salva gli errori per le statistiche e l'esportazione CSV
+    frame_joint_errors[yolo_frame_str] = {}
+    mpjpe_list.extend(errors)
+    for i, err in enumerate(errors):
+        joint_idx = valid_joint_indices[i]
+        per_joint_errors[joint_idx].append(err)
+        frame_joint_errors[yolo_frame_str][joint_idx] = err
+
+# Se sono stati raccolti errori, stampa le statistiche riassuntive
 if mpjpe_list:
-    print(f"\nEvaluation over {len(common_frames)} frames and {len(mpjpe_list)} joint-pairs:")
-    print(f"Mean MPJPE:   {np.mean(mpjpe_list):.2f} mm")
-    print(f"Median MPJPE: {np.median(mpjpe_list):.2f} mm")
-    print(f"Min / Max:    {np.min(mpjpe_list):.2f} / {np.max(mpjpe_list):.2f} mm")
-    print("\nAverage error per joint:")
+    print(f"\nValutazione su {len(frame_joint_errors)} frame e {len(mpjpe_list)} coppie di giunti (post-allineamento):")
+    print(f"MPJPE Medio:   {np.mean(mpjpe_list):.2f} mm")
+    print(f"MPJPE Mediano: {np.median(mpjpe_list):.2f} mm")
+    print(f"Min / Max:     {np.min(mpjpe_list):.2f} / {np.max(mpjpe_list):.2f} mm")
+    print("\nErrore medio per giunto:")
     for j, errs in enumerate(per_joint_errors):
         if errs:
-            print(f"  Joint {j}: {np.mean(errs):.2f} mm")
+            print(f"  Giunto {j}: {np.mean(errs):.2f} mm ({len(errs)} misurazioni)")
         else:
-            print(f"  Joint {j}: N/A")
+            print(f"  Giunto {j}: N/A")
 else:
-    print("No comparable joint-pairs found!")
+    print("Nessuna coppia di giunti confrontabile trovata dopo l'allineamento!")
 
-# Write detailed per-frame, per-joint MPJPE values to CSV
+# Scrivi i risultati dettagliati su CSV
 with open('mpjpe_3d_resultsV2.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
-    # Header for individual measurements
-    writer.writerow(['frame', 'joint', 'mpjpe_mm'])
-    for frame in common_frames:
-        for j in range(NUM_JOINTS):
-            yolo_joint = yolo_3d[frame].get(str(j)) or yolo_3d[frame].get(j)
-            gt_joint   = gt_3d[frame].get(str(j)) or gt_3d[frame].get(j)
-            if yolo_joint is None or gt_joint is None:
-                continue
-            if np.any(np.isnan(yolo_joint)) or np.any(np.isnan(gt_joint)):
-                continue
-            if np.any(np.isinf(yolo_joint)) or np.any(np.isinf(gt_joint)):
-                continue
-            err = np.linalg.norm(np.array(yolo_joint) - np.array(gt_joint))
-            writer.writerow([frame, j, err])
+    writer.writerow(['frame', 'joint', 'mpjpe_mm_post_alignment'])
+    for frame, errors_dict in sorted(frame_joint_errors.items(), key=lambda item: int(item[0])):
+        for joint_idx, error in errors_dict.items():
+            writer.writerow([frame, joint_idx, error])
     
-    # Blank line separator
     writer.writerow([])
-    
-    # Summary statistics
     writer.writerow(['STATISTIC', 'VALUE_mm'])
     if mpjpe_list:
         writer.writerow(['mean_mpjpe', f"{np.mean(mpjpe_list):.2f}"])
@@ -90,12 +128,8 @@ with open('mpjpe_3d_resultsV2.csv', 'w', newline='') as csvfile:
         writer.writerow(['min_mpjpe', f"{np.min(mpjpe_list):.2f}"])
         writer.writerow(['max_mpjpe', f"{np.max(mpjpe_list):.2f}"])
         writer.writerow(['total_joint_pairs', len(mpjpe_list)])
-        writer.writerow(['total_frames', len(common_frames)])
-        
-        # Blank line separator
+        writer.writerow(['total_frames', len(frame_joint_errors)])
         writer.writerow([])
-        
-        # Per-joint statistics
         writer.writerow(['JOINT_INDEX', 'MEAN_ERROR_mm', 'NUM_MEASUREMENTS'])
         for j, errs in enumerate(per_joint_errors):
             if errs:
@@ -104,10 +138,5 @@ with open('mpjpe_3d_resultsV2.csv', 'w', newline='') as csvfile:
                 writer.writerow([j, 'N/A', 0])
     else:
         writer.writerow(['mean_mpjpe', 'N/A'])
-        writer.writerow(['median_mpjpe', 'N/A'])
-        writer.writerow(['min_mpjpe', 'N/A'])
-        writer.writerow(['max_mpjpe', 'N/A'])
-        writer.writerow(['total_joint_pairs', 0])
-        writer.writerow(['total_frames', len(common_frames)])
 
-print("✅ Results saved to mpjpe_3d_resultsV2.csv")
+print("\n✅ Risultati con allineamento Procrustes e offset temporale salvati su mpjpe_3d_resultsV2.csv")
