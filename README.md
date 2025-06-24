@@ -1,9 +1,6 @@
 # MoCap_8
 
 **Computer Vision Project – MoCap Alignment**  
-Group member:
-Antonio Di Lauro,
-Gianluigi Vazzoler
 
 ---
 
@@ -177,3 +174,10 @@ Alignment Metrics: `Motion Capture Data/accuracy_metrics.csv`
 2D YOLO Evaluation: `YOLO/mpjpe_results.csv`
 
 3D YOLO vs MoCap: `YOLO/mpjpe_3d_results.csv`
+
+## Authors
+
+- Antonio Di Lauro, Florian Remberger
+- Computer Vision course, University of Trento, 2024-2025
+
+---
