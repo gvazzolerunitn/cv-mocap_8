@@ -55,15 +55,18 @@ cv-mocap_8/
 │ └── reprojection_results.csv
 │ ├── visualize_3d_poses.py
 ├── YOLO/
-│ ├── yolo_predict.py
-│ ├── YOLO_keypoint_extraction.py
-│ ├── triangulation_YOLO.py
-│ ├── evaluate_yolo_vs_gt.py
+│ ├── runs/
 │ ├── 3d_confront.py
-│ ├── yolo2d_for_triangulation.json
-│ ├── triangulated_positions_yolo.json
+│ ├── evaluate_yolo_vs_gt.py
+│ ├── fix_yolo_coordinates.py
 │ └── mpjpe_3d_results.csv
 │ └── mpjpe_results.csv
+│ ├── triangulated_positions.json
+│ ├── triangulation_yolo.py
+│ ├── yolo_keypoint_extraction.py
+│ ├── yolo_predict.py
+│ ├── yolo2d_for_triangulation_rescaled.json
+│ ├── yolo2d_for_triangulation.json
 ├── video/
 │ ├── mocap_7/
 │ ├── rectified/
@@ -144,6 +147,8 @@ Run YOLOv8‑Pose on all views, evaluate 2D & triangulate 3D:
 ```bash
 cd YOLO
 python yolo_predict.py
+python yolo_keypoint_extraction.py
+python fix_yolo_coordinates.py
 python triangulation_YOLO.py
 python evaluate_yolo_vs_gt.py 
 python 3d_confront.py
