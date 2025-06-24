@@ -175,6 +175,8 @@ Alignment Metrics: `Motion Capture Data/accuracy_metrics.csv`
 
 3D YOLO vs MoCap: `YOLO/mpjpe_3d_results.csv`
 
+--- 
+
 ## Authors
 
 - Antonio Di Lauro, Florian Remberger
