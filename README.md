@@ -98,7 +98,7 @@ pip install -r requirements.txt
 > **⚠️ Note:** All commands below assume you are running them from the project root directory (`cv-mocap_8/`).
 > ---
 # 🚀 Usage
-1. Annotate Skeletons (Roboflow upload)  
+## Task 1. Annotate Skeletons (Roboflow upload)  
 Rectify raw annotations and prepare COCO file:
 ```bash
 cd Annotations
@@ -107,7 +107,7 @@ python rectify_annotationsV2.py \
   --calib_dir "3D Pose Estimation Material/camera_data_with_Rvecs_2ndversion/Camera_config2"
   --output Annotations/_annotations_rectified_v2.coco.json
 ```
-2. 3D Player’s Position via Triangulation
+## Task 2. 3D Player’s Position via Triangulation
 Triangulate: 
 ```bash
 cd '.\Triangulation and reprojection and 3D\'
@@ -124,7 +124,7 @@ cd '.\Triangulation and reprojection and 3D\'
 python visualize_3d_poses.py triangulated_positions_v2.json
 ```
 ---
-3. Time-aligning with MoCap Data  
+## Task 3. Time-aligning with MoCap Data  
 Align video to MoCap:
 ```bash
 cd '.\Motion Capture Data\'
@@ -141,7 +141,7 @@ cd '.\Motion Capture Data\'
 python skeleton_comparison.py
 ```
 ---
-4. Bonus: YOLOv8-Pose Inference & Evaluation  
+## Task 4. Bonus: YOLOv8-Pose Inference & Evaluation  
 Run YOLOv8‑Pose on all views, evaluate 2D & triangulate 3D:
 ```bash
 cd YOLO
