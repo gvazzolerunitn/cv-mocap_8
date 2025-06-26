@@ -35,7 +35,7 @@ For every frame, we gathered all 2D detections present in at least two views, fo
 
 To assess geometric consistency, each reconstructed point was reprojected into all four image planes with \path{cv2.projectPoints} and compared against the original 2D annotations. The following table summarizes the key reprojection‐error statistics (extracted from \path{reprojection_results.csv}):
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
   \caption{Reprojection‐error statistics (in pixels)}
   \label{tab:reproj-errors}
@@ -63,7 +63,7 @@ After loading both streams we first converted every video index to MoCap time us
 
 With the timelines synchronised we compared the computer-vision reconstruction to the MoCap ground truth. Each skeleton was translated so that the hips sit at the origin and uniformly scaled such that the hips–to–head distance equals one. A rigid Procrustes fit (rotation + translation) and a similarity fit (rotation + translation + isotropic scale) were then applied to every matched joint pair (864 pairs in total). The resulting errors are summarised below:
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
   \caption{3D reconstruction errors after Procrustes alignment (normalized units)}
   \label{tab:triang-vs-mocap}
@@ -91,7 +91,7 @@ To complement our manual annotations and multiview triangulation pipeline we ran
 \subsection*{2D Evaluation against Ground Truth}  
 We rectified the YOLO key-points to each image plane and matched them to our labelled poses across all calibrated cameras using the Hungarian assignment on the Mean Per-Joint Position Error (MPJPE). The evaluation code is provided in \path{evaluate_yolo_vs_gt.py} and produced the statistics below:
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
   \caption{2D YOLOv8-Pose vs.\ manual ground truth (in pixels)}
   \label{tab:yolo2d-eval}
@@ -117,7 +117,7 @@ All detections above the 0.3 threshold were piped through exactly the same linea
 \subsection*{3D Accuracy against MoCap}  
 Finally, we aligned the YOLO-based 3D skeletons with the ground truth MoCap data using Procrustes analysis (\path{3d_confront.py}). The script successfully synchronized the two data streams by calculating a temporal offset and then performed a rigid alignment (rotation, translation, and scaling) for each of the 49 common frames. The evaluation, performed over 616 corresponding joint-pairs, revealed good reconstruction quality:
 
-\begin{table}[h]
+\begin{table}[htbp]
   \centering
   \caption{3D YOLOv8-Pose vs.\ MoCap accuracy (normalized units / mm)}
   \label{tab:yolo3d-accuracy}
