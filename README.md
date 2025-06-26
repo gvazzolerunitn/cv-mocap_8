@@ -92,6 +92,8 @@ mocap_env\Scripts\activate
 ```bash
 pip install -r requirements.txt
 ```
+
+> **⚠️ Requirements note:** The requirements.txt file specifies only the necessary packages without version constraints, allowing pip to install the most suitable versions for your Python environment.
 ---
 > **⚠️ Note:** All commands below assume you are running them from the project root directory (`cv-mocap_8/`).
 > ---
