@@ -110,34 +110,34 @@ python rectify_annotationsV2.py \
 2. 3D Player’s Position via Triangulation
 Triangulate: 
 ```bash
-cd Triangulation and reprojection and 3D
+cd '.\Triangulation and reprojection and 3D\'
 python triangulation.py
 ```
 Analyze reprojection error:
 ```bash
-cd Triangulation and reprojection and 3D
+cd '.\Triangulation and reprojection and 3D\'
 python reprojection.py
 ```
 Visualize the skeleton in 3D:
 ```bash
-cd Triangulation and reprojection and 3D
+cd '.\Triangulation and reprojection and 3D\'
 python visualize_3d_poses.py triangulated_positions_v2.json
 ```
 ---
 3. Time-aligning with MoCap Data  
 Align video to MoCap:
 ```bash
-cd Motion Capture Data
+cd '.\Motion Capture Data\'
 python export_mocap_segment.py
 ```
 Compute Procrustes errors:
 ```bash
-cd Motion Capture Data
+cd '.\Motion Capture Data\'
 python compare_relative_procrustes.py
 ```
 To graphically visualize the difference between the 2 skeleton:
 ```bash
-cd Motion Capture Data
+cd '.\Motion Capture Data\'
 python skeleton_comparison.py
 ```
 ---
