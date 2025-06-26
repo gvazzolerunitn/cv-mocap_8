@@ -22,7 +22,7 @@ The following report presents a complete pipeline for multi-view human motion an
 We implemented a structured annotation pipeline to label the basketball player’s 2D joint positions across four synchronized camera views.  
 
 \begin{itemize}
-  \item \textbf{Manual annotation}: using Roboflow’s web interface, we labeled $\approx$200 frames, exporting the results in COCO format as \path{_annotations.coco.json}.
+  \item \textbf{Manual annotation}: using Roboflow’s web interface, we labeled $\approx$200 frames (see Figure~\ref{fig:roboflow})., exporting the results in COCO format as \path{_annotations.coco.json}.
   \item \textbf{Geometric rectification}: we ran \path{rectify_annotationsV2.py}, which applies the same lens distortion correction used on the video frames to our ground-truth keypoints.
   \item \textbf{Calibration data}: we adopted the intrinsic and extrinsic parameters from \path{camera_data_with_Rvecs_2ndversion}, as recommended in the project guide, and built our entire pipeline around these files.
 \end{itemize}
@@ -31,7 +31,7 @@ We implemented a structured annotation pipeline to label the basketball player�
 
 Building on our rectified 2D annotations, we triangulated the basketball player’s joints in 3D using views from cameras 2, 5, 8, and 13. After loading each camera’s intrinsic matrix and converting its rotation vector into a $3\times3$ matrix via \path{cv2.Rodrigues}, we assembled the full projection matrices $P = K\,[R\,|\,t]$ following the pin-hole model.  
 
-For every frame, we gathered all 2D detections present in at least two views, formed the homogeneous DLT system $A\,X=0$, and solved for the 3D point $X$ using SVD (specifically, the right singular vector corresponding to the smallest singular value). The resulting world coordinates were saved in \path{triangulated_positions_v2.json} and previewed with a Matplotlib viewer to verify plausible limb lengths and smooth trajectories.
+For every frame, we gathered all 2D detections present in at least two views, formed the homogeneous DLT system $A\,X=0$, and solved for the 3D point $X$ using SVD (specifically, the right singular vector corresponding to the smallest singular value). The resulting world coordinates were saved in \path{triangulated_positions_v2.json} and previewed with a Matplotlib viewer to verify plausible limb lengths and smooth trajectories (see Figure~\ref{fig:triangulation}).
 
 To assess geometric consistency, each reconstructed point was reprojected into all four image planes with \path{cv2.projectPoints} and compared against the original 2D annotations. The following table summarizes the key reprojection‐error statistics (extracted from \path{reprojection_results.csv}):
 
@@ -82,11 +82,11 @@ With the timelines synchronised we compared the computer-vision reconstruction t
   \end{tabular}
 \end{table}
 
-Units are normalized so that the hips–head distance equals 1. Introducing an optimal isotropic scale reduces MPJPE by \(\sim\!3.5\%\) and RMSE by \(\sim\!3\%\), confirming our 3D pipeline reconstructs MoCap‐quality skeletons with sub‐percent accuracy in relative joint positions.  
+Units are normalized so that the hips–head distance equals 1. Introducing an optimal isotropic scale reduces MPJPE by \(\sim\!3.5\%\) and RMSE by \(\sim\!3\%\), confirming our 3D pipeline reconstructs MoCap‐quality skeletons with sub‐percent accuracy in relative joint positions (see Figure~\ref{fig:comparison}).  
 
 \section*{Bonus Task: YOLOv8-Pose}
 
-To complement our manual annotations and multiview triangulation pipeline we ran the lightweight Ultralytics YOLOv8-Pose network on the raw footage from the four calibrated cameras (IDs 2, 5, 8 and 13). For every frame the first detected person’s 17 COCO key-points were stored, yielding a per-frame JSON of 2-D joints (\path{yolo2d_for_triangulation.json}).
+To complement our manual annotations and multiview triangulation pipeline we ran the lightweight Ultralytics YOLOv8-Pose network on the raw footage from the four calibrated cameras (see Figure~\ref{fig:yolo}).. For every frame the first detected person’s 17 COCO key-points were stored, yielding a per-frame JSON of 2-D joints (\path{yolo2d_for_triangulation.json}).
 
 \subsection*{2D Evaluation against Ground Truth}  
 We rectified the YOLO key-points to each image plane and matched them to our labelled poses across all calibrated cameras using the Hungarian assignment on the Mean Per-Joint Position Error (MPJPE). The evaluation code is provided in \path{evaluate_yolo_vs_gt.py} and produced the statistics below:
@@ -110,12 +110,14 @@ We rectified the YOLO key-points to each image plane and matched them to our lab
   \end{tabular}
 \end{table}
 
+\textbf{Performance Analysis:} it is worth mentioning that YOLOv8s worked well for closer cameras (2, 8) but struggled with distant ones (5, 13) due to smaller subject size and hardware constraints requiring the lightweight 's' variant. Therefore, our metrics reflect only successful detections.
+
 \subsection*{Triangulation of YOLO Keypoints}
 
 All detections above the 0.3 threshold were piped through exactly the same linear SVD triangulation used for the hand-labelled data (\path{triangulation_YOLO.py}). Whenever at least two views observed a joint we solved for its homogeneous 3-D location and stored the result in \path{triangulated_positions_yolo.json}.
 
 \subsection*{3D Accuracy against MoCap}  
-Finally, we aligned the YOLO-based 3D skeletons with the ground truth MoCap data using Procrustes analysis (\path{3d_confront.py}). The script successfully synchronized the two data streams by calculating a temporal offset and then performed a rigid alignment (rotation, translation, and scaling) for each of the 49 common frames. The evaluation, performed over 616 corresponding joint-pairs, revealed good reconstruction quality:
+Finally, we aligned the YOLO-based 3D skeletons with the ground truth MoCap data using Procrustes analysis (\path{3d_confront.py}). The script successfully synchronized the two data streams by calculating a temporal offset and then performed a rigid alignment (rotation, translation, and scaling) for each of the 49 common frames. The evaluation, performed over 616 corresponding joint-pairs, revealed good reconstruction quality. The resulting Mean Per-Joint Position Error (MPJPE) of 1.19 mm is remarkably low, indicating a near-perfect reconstruction of the subject's pose relative to the professional MoCap system:
 
 \begin{table}[htbp]
   \centering
@@ -142,6 +144,46 @@ We successfully completed all project objectives: we produced precise 2D keypoin
 \section*{References}
 All code, data and supplementary materials are available on
 \href{https://github.com/gvazzolerunitn/cv-mocap_8}{GitHub}.
+
+\clearpage
+
+\section*{Appendix}
+
+\vspace{2cm}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{samples/roboflow_annotation.png}
+  \caption{Manual annotation interface in Roboflow showing 2D keypoint labeling of the basketball player across multiple camera views.}
+  \label{fig:roboflow}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{samples/triangulation_manual_annotation.png}
+  \caption{3D triangulation results from manual annotations, showing the reconstructed skeleton in 3D space.}
+  \label{fig:triangulation}
+\end{minipage}
+\end{figure}
+
+\begin{figure}[htbp]
+\centering
+\begin{minipage}{0.48\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{samples/cv_vs_mocap.png}
+  \caption{Comparison between computer vision reconstruction and MoCap ground truth, demonstrating the accuracy of our pipeline.}
+  \label{fig:comparison}
+\end{minipage}
+\hfill
+\begin{minipage}{0.35\textwidth}
+  \centering
+  \includegraphics[width=\textwidth]{samples/yolo_hpe.png}
+  \caption{YOLOv8-Pose detection results showing automated keypoint extraction across the four camera views.}
+  \label{fig:yolo}
+\end{minipage}
+\end{figure}
 
 
 \end{document}

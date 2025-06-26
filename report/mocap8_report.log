@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2025.6.26)  26 JUN 2025 11:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2025.6.26)  26 JUN 2025 12:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -347,23 +347,51 @@ Overfull \hbox (1.11876pt too wide) in paragraph at lines 26--27
 
 [1
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}] [2{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}] [3] [4] [5] (./mocap8_report.aux)
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}] [2{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texlive/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}] [3] [4] [5]
+<samples/roboflow_annotation.png, id=59, 628.3475pt x 745.78625pt>
+File: samples/roboflow_annotation.png Graphic file (type png)
+<use samples/roboflow_annotation.png>
+Package pdftex.def Info: samples/roboflow_annotation.png  used on input line 158.
+(pdftex.def)             Requested size: 126.0022pt x 149.54152pt.
+
+Underfull \hbox (badness 1048) in paragraph at lines 159--159
+\T1/lmr/m/n/10.95 (+20) bel-ing of the bas-ket-ball
+ []
+
+<samples/triangulation_manual_annotation.png, id=61, 445.665pt x 386.44376pt>
+File: samples/triangulation_manual_annotation.png Graphic file (type png)
+<use samples/triangulation_manual_annotation.png>
+Package pdftex.def Info: samples/triangulation_manual_annotation.png  used on input line 165.
+(pdftex.def)             Requested size: 172.79846pt x 149.83385pt.
+<samples/cv_vs_mocap.png, id=62, 1434.35875pt x 652.4375pt>
+File: samples/cv_vs_mocap.png Graphic file (type png)
+<use samples/cv_vs_mocap.png>
+Package pdftex.def Info: samples/cv_vs_mocap.png  used on input line 175.
+(pdftex.def)             Requested size: 172.79846pt x 78.59773pt.
+<samples/yolo_hpe.png, id=63, 676.5275pt x 551.05875pt>
+File: samples/yolo_hpe.png Graphic file (type png)
+<use samples/yolo_hpe.png>
+Package pdftex.def Info: samples/yolo_hpe.png  used on input line 182.
+(pdftex.def)             Requested size: 126.0022pt x 102.63376pt.
+[6
+
+ <./samples/roboflow_annotation.png> <./samples/triangulation_manual_annotation.png> <./samples/cv_vs_mocap.png> <./samples/yolo_hpe.png>] (./mocap8_report.aux)
 Package rerunfilecheck Info: File `mocap8_report.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 10952 strings out of 476041
- 176791 string characters out of 5793174
- 1860388 words of memory out of 6000000
- 31135 multiletter control sequences out of 15000+600000
- 554176 words of font info for 109 fonts, out of 8000000 for 9000
+ 10996 strings out of 476041
+ 177868 string characters out of 5793174
+ 1859388 words of memory out of 6000000
+ 31163 multiletter control sequences out of 15000+600000
+ 554353 words of font info for 111 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
- 75i,8n,76p,1168b,527s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,8n,76p,1168b,561s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on mocap8_report.pdf (5 pages, 193487 bytes).
+Output written on mocap8_report.pdf (6 pages, 1618128 bytes).
 PDF statistics:
- 100 PDF objects out of 1000 (max. 8388607)
- 74 compressed objects within 1 object stream
- 21 named destinations out of 1000 (max. 500000)
- 25089 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 123 PDF objects out of 1000 (max. 8388607)
+ 88 compressed objects within 1 object stream
+ 27 named destinations out of 1000 (max. 500000)
+ 25109 words of extra memory for PDF output out of 29859 (max. 10000000)
 
